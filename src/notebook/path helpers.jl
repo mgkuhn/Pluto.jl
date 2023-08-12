@@ -90,7 +90,7 @@ function cutename()
     titlecase(rand(adjectives)) * " " * rand(nouns)
 end
 
-function new_notebooks_directory()
+function new_notebooks_directory(;mkdir_callback = nothing)
     try
         path = get(
 			ENV,
@@ -98,6 +98,7 @@ function new_notebooks_directory()
 			joinpath(first(DEPOT_PATH), "pluto_notebooks")
 		)
         if !isdir(path)
+            mkdir_callback === nothing || mkdir_callback()
             mkdir(path)
         end
         path

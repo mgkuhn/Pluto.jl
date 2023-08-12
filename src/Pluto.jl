@@ -99,16 +99,26 @@ export activate_notebook_environment
 
 include("./precompile.jl")
 
-if get(ENV, "JULIA_PLUTO_SHOW_BANNER", "1") != "0" && get(ENV, "CI", "🍄") != "true"
-@info """\n
-    Welcome to Pluto $(PLUTO_VERSION_STR) 🎈
-    Start a notebook server using:
+function print_banner()
+    if (get(ENV, "JULIA_PLUTO_SHOW_BANNER", "1") != "0" &&
+        get(ENV, "CI", "🍄") != "true" && isinteractive())
+        @info """
 
-  julia> Pluto.run()
+          Welcome to Pluto $(PLUTO_VERSION_STR) 🎈
+          Start a notebook server using:
 
-    Have a look at the FAQ:
-    https://github.com/fonsp/Pluto.jl/wiki
-\n"""
+        julia> Pluto.run()
+
+          Have a look at the FAQ:
+          https://github.com/fonsp/Pluto.jl/wiki
+
+        """
+    end
+end
+
+function __init__()
+    # print banner only once, if there isn't yet a notebooks directory
+    new_notebooks_directory(mkdir_callback = print_banner)
 end
 
 end
